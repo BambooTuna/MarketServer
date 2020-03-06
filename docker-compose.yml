@@ -1,0 +1,31 @@
+version: "3.4"
+services:
+  mysql:
+    restart: always
+    build: rdb/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=market
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=BambooTuna
+      - MYSQL_PASSWORD=pass
+  redis:
+    image: redis:3.2.4-alpine
+    restart: always
+    ports:
+      - 6379:6379
+  boot:
+    image: bambootuna/marketserver:latest
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      - REDIS_HOST_SESSION=redis
+      - REDIS_HOST_OAUTH2=redis
+      - MYSQL_HOST=mysql
+      - MYSQL_DATABASE=market
+
+    depends_on:
+      - mysql
+      - redis
