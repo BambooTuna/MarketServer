@@ -12,6 +12,7 @@ import com.github.BambooTuna.AkkaServerSupport.authentication.session.{
   DefaultSession,
   JWTSessionSettings
 }
+import com.github.BambooTuna.AkkaServerSupport.core.router.DefaultCorsSupport
 import com.github.BambooTuna.AkkaServerSupport.core.session.StorageStrategy
 import com.github.BambooTuna.MarketServer.dao.RedisStorageStrategy
 import com.github.BambooTuna.MarketServer.router.AuthenticationRouteImpl
@@ -24,6 +25,8 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 abstract class Component(config: Config)(implicit system: ActorSystem,
                                          materializer: ActorMaterializer) {
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+
+  val corsSupport = DefaultCorsSupport.fromConfig(config)
 
   val ec: ExecutionContext = monix.execution.Scheduler.Implicits.global
   val dbSession: Resource[Task, HikariTransactor[Task]] =

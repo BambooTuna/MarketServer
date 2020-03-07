@@ -82,8 +82,11 @@ object `doobie-quill` {
       ("-hikari" :: "-quill" :: Nil).map(a => "org.tpolecat" %% s"doobie$a" % "0.8.6")
 }
 
-object JWT {
-  private val version = "4.2.0"
-  val core = "com.pauldijou" %% "jwt-core" % version
-  val circe = "com.pauldijou" %% "jwt-circe" % version
+object AkkaServerSupport {
+  val resolver = "Maven Repo on github" at "https://BambooTuna.github.io/AkkaServerSupport"
+
+  private val version = "1.0.1-SNAPSHOT"
+  val core = "com.github.BambooTuna" %% "akkaserversupport-core" % version
+  val authentication = "com.github.BambooTuna" %% "akkaserversupport-authentication" % version
+  val cooperation = "com.github.BambooTuna" %% "akkaserversupport-cooperation" % version
 }

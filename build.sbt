@@ -5,11 +5,11 @@ lazy val boot = (project in file("boot"))
   .settings(commonSettings)
   .settings(dockerSettings)
   .settings(
-    resolvers += "Maven Repo on github" at "https://BambooTuna.github.io/AkkaServerSupport",
+    resolvers += AkkaServerSupport.resolver,
     libraryDependencies ++= Seq(
-      "com.github.BambooTuna" %% "akkaserversupport-core" % "1.0.0-SNAPSHOT",
-      "com.github.BambooTuna" %% "akkaserversupport-authentication" % "1.0.0-SNAPSHOT",
-      "com.github.BambooTuna" %% "akkaserversupport-cooperation" % "1.0.0-SNAPSHOT",
+      AkkaServerSupport.core,
+      AkkaServerSupport.authentication,
+      AkkaServerSupport.cooperation,
       MySQLConnectorJava.version,
       Redis.client
     ) ++ `doobie-quill`.all
