@@ -7,6 +7,7 @@ import com.github.BambooTuna.MarketServer.model.LinkedUserCredentialsImpl
 case class LinkedSignUpRequestCommandImpl(serviceId: String,
                                           serviceName: String)
     extends LinkedSignUpRequestCommand[LinkedUserCredentialsImpl] {
+  require(serviceId.nonEmpty && serviceName.nonEmpty)
   override def createLinkedUserCredentials: LinkedUserCredentialsImpl =
     LinkedUserCredentialsImpl(SystemSettings.generateId(),
                               serviceId,

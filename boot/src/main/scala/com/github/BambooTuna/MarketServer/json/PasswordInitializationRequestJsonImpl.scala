@@ -5,5 +5,6 @@ import com.github.BambooTuna.MarketServer.model.UserCredentialsImpl
 
 case class PasswordInitializationRequestJsonImpl(mail: String)
     extends PasswordInitializationRequestJson[UserCredentialsImpl] {
+  require(mail.nonEmpty)
   override val signInId: String = mail
 }

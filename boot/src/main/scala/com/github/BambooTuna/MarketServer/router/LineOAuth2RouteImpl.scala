@@ -64,13 +64,7 @@ abstract class LineOAuth2RouteImpl(
     onComplete(f) {
       case Success(value) =>
         //TODO
-        complete(
-          HttpResponse(
-            status = StatusCodes.OK,
-            entity = HttpEntity(ContentTypes.`application/json`,
-                                s"""{"redirect_uri":"${value.toString()}"}""")
-          )
-        )
+        complete(StatusCodes.OK, HttpEntity(ContentTypes.`application/json`, s"""{"redirect_uri":"${value.toString()}"}"""))
 //        redirect(value, StatusCodes.PermanentRedirect)
       case Failure(exception) =>
         errorHandling(exception)

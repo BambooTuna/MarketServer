@@ -9,6 +9,7 @@ import com.github.BambooTuna.MarketServer.model.{
 
 case class SignUpRequestJsonImpl(mail: String, pass: String)
     extends SignUpRequestJson[UserCredentialsImpl] {
+  require(mail.nonEmpty && pass.nonEmpty)
   override def createUserCredentials: UserCredentialsImpl =
     UserCredentialsImpl(id = SystemSettings.generateId(),
                         signinId = mail,

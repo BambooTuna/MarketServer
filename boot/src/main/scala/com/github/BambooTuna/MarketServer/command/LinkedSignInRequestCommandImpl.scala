@@ -5,4 +5,6 @@ import com.github.BambooTuna.MarketServer.model.LinkedUserCredentialsImpl
 
 case class LinkedSignInRequestCommandImpl(serviceId: String,
                                           serviceName: String)
-    extends LinkedSignInRequestCommand[LinkedUserCredentialsImpl]
+    extends LinkedSignInRequestCommand[LinkedUserCredentialsImpl] {
+  require(serviceId.nonEmpty && serviceName.nonEmpty)
+}
