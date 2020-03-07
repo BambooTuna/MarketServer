@@ -12,10 +12,17 @@ import com.github.BambooTuna.AkkaServerSupport.authentication.session.{
   DefaultSession,
   JWTSessionSettings
 }
+import com.github.BambooTuna.AkkaServerSupport.cooperation.model.{
+  ClientConfig,
+  OAuth2Settings
+}
 import com.github.BambooTuna.AkkaServerSupport.core.router.DefaultCorsSupport
 import com.github.BambooTuna.AkkaServerSupport.core.session.StorageStrategy
 import com.github.BambooTuna.MarketServer.dao.RedisStorageStrategy
-import com.github.BambooTuna.MarketServer.router.AuthenticationRouteImpl
+import com.github.BambooTuna.MarketServer.router.{
+  AuthenticationRouteImpl,
+  LineOAuth2RouteImpl
+}
 import com.typesafe.config.Config
 import doobie.hikari.HikariTransactor
 import monix.eval.Task
@@ -39,13 +46,13 @@ abstract class Component(config: Config)(implicit system: ActorSystem,
       Blocker.liftExecutionContext(ec)
     )
 
-  val sessionSettings: JWTSessionSettings =
+  private val sessionSettings: JWTSessionSettings =
     new ConfigSessionSettings(config)
 
-  val sessionStorage: StorageStrategy[String, String] =
+  private val sessionStorage: StorageStrategy[String, String] =
     RedisStorageStrategy.fromConfig(config, "session")(system, sessionSettings)
 
-  val session =
+  private val session =
     new DefaultSession[SessionToken](sessionSettings, sessionStorage) {
       override def fromThrowable(throwable: Throwable): StandardRoute =
         complete(StatusCodes.InternalServerError) //TODO
@@ -55,6 +62,21 @@ abstract class Component(config: Config)(implicit system: ActorSystem,
     new AuthenticationRouteImpl(session) {
       override def errorHandling(throwable: Throwable): StandardRoute =
         complete(StatusCodes.InternalServerError) //TODO
+    }
+
+  //////////
+  private val oauthStorage: StorageStrategy[String, String] =
+    RedisStorageStrategy.fromConfig(config, "oauth2")(system, sessionSettings)
+
+  private val clientConfig: ClientConfig =
+    ClientConfig.fromConfig("line", system.settings.config)
+
+  private val lineOAuth = OAuth2Settings(clientConfig, oauthStorage)
+
+  val lineOAuth2Route =
+    new LineOAuth2RouteImpl(session, lineOAuth) {
+      override def errorHandling(throwable: Throwable): StandardRoute =
+        complete(StatusCodes.InternalServerError)
     }
 
 }

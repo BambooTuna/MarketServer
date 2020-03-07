@@ -22,7 +22,7 @@ object Main extends App {
     )
 
   val bindingFuture =
-    Http().bindAndHandle(r.createRoute, serverConfig.host, serverConfig.port)
+    Http().bindAndHandle(r.allRoute, serverConfig.host, serverConfig.port)
 
   sys.addShutdownHook {
     bindingFuture

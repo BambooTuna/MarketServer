@@ -25,6 +25,10 @@ services:
       - REDIS_HOST_OAUTH2=redis
       - MYSQL_HOST=mysql
       - MYSQL_DATABASE=market
+      - ALLOWED_ORIGIN=http://localhost:9050
+      - LINE_CLIENT_ID=123465789
+      - LINE_CLIENT_SECRET=123465789
+      - LINE_REDIRECT_URI=http://localhost:9050/oauth2/signin/line
 
     depends_on:
       - mysql
