@@ -3,7 +3,7 @@ package com.github.BambooTuna.MarketServer
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import com.github.BambooTuna.AkkaServerSupport.core.domain.ServerConfig
+import com.github.BambooTuna.AkkaServerSupport.core.model.ServerConfig
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -13,7 +13,7 @@ object Main extends App {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  val r = new Routes(system.settings.config)
+  val r = new RouteControllerImpl
 
   val serverConfig: ServerConfig =
     ServerConfig(
@@ -22,7 +22,7 @@ object Main extends App {
     )
 
   val bindingFuture =
-    Http().bindAndHandle(r.allRoute, serverConfig.host, serverConfig.port)
+    Http().bindAndHandle(r.toRoutes, serverConfig.host, serverConfig.port)
 
   sys.addShutdownHook {
     bindingFuture

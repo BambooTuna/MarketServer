@@ -1,6 +1,6 @@
 package com.github.BambooTuna.MarketServer.json
 
-import com.github.BambooTuna.AkkaServerSupport.authentication.json.SignUpRequestJson
+import com.github.BambooTuna.AkkaServerSupport.core.serializer.JsonRecodeSerializer
 import com.github.BambooTuna.MarketServer.SystemSettings
 import com.github.BambooTuna.MarketServer.model.{
   EncryptedPasswordImpl,
@@ -8,11 +8,15 @@ import com.github.BambooTuna.MarketServer.model.{
 }
 
 case class SignUpRequestJsonImpl(mail: String, pass: String)
-    extends SignUpRequestJson[UserCredentialsImpl] {
-  require(mail.nonEmpty && pass.nonEmpty)
-  override def createUserCredentials: UserCredentialsImpl =
-    UserCredentialsImpl(id = SystemSettings.generateId(),
-                        signinId = mail,
-                        signinPass =
-                          EncryptedPasswordImpl(pass).changeEncryptedPass(pass))
+
+object SignUpRequestJsonImpl {
+  implicit val js =
+    new JsonRecodeSerializer[SignUpRequestJsonImpl, UserCredentialsImpl] {
+      override def toRecode(json: SignUpRequestJsonImpl): UserCredentialsImpl =
+        UserCredentialsImpl(
+          id = SystemSettings.generateId(),
+          signinId = json.mail,
+          signinPass =
+            EncryptedPasswordImpl(json.pass).changeEncryptedPass(json.pass))
+    }
 }
