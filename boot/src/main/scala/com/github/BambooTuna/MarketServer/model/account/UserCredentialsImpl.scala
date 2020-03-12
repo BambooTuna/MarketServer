@@ -1,4 +1,4 @@
-package com.github.BambooTuna.MarketServer.model
+package com.github.BambooTuna.MarketServer.model.account
 
 import com.github.BambooTuna.AkkaServerSupport.authentication.model.UserCredentials
 import com.github.BambooTuna.MarketServer.SystemSettings

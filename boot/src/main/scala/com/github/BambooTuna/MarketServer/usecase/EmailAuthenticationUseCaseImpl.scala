@@ -3,7 +3,7 @@ package com.github.BambooTuna.MarketServer.usecase
 import com.github.BambooTuna.AkkaServerSupport.authentication.dao.UserCredentialsDao
 import com.github.BambooTuna.AkkaServerSupport.authentication.useCase.EmailAuthenticationUseCase
 import com.github.BambooTuna.AkkaServerSupport.core.session.StorageStrategy
-import com.github.BambooTuna.MarketServer.model.UserCredentialsImpl
+import com.github.BambooTuna.MarketServer.model.account.UserCredentialsImpl
 import com.github.BambooTuna.MarketServer.model.mail.EmailSettings
 import monix.eval.Task
 

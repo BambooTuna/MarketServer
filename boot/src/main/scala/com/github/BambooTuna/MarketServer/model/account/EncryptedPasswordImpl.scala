@@ -1,4 +1,4 @@
-package com.github.BambooTuna.MarketServer.model
+package com.github.BambooTuna.MarketServer.model.account
 
 import java.math.BigInteger
 import java.security.MessageDigest

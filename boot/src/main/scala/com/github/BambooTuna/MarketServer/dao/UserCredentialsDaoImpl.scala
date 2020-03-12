@@ -3,7 +3,7 @@ package com.github.BambooTuna.MarketServer.dao
 import cats.data.{Kleisli, OptionT}
 import cats.effect.Resource
 import com.github.BambooTuna.AkkaServerSupport.authentication.dao.UserCredentialsDao
-import com.github.BambooTuna.MarketServer.model.UserCredentialsImpl
+import com.github.BambooTuna.MarketServer.model.account.UserCredentialsImpl
 import doobie.hikari.HikariTransactor
 import doobie.quill.DoobieContext
 import io.getquill.SnakeCase
