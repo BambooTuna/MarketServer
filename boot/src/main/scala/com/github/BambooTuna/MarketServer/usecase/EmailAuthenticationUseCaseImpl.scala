@@ -22,7 +22,7 @@ class EmailAuthenticationUseCaseImpl(
         .withPlainText(
           emailSettings.emailContents.generateActivateCodeContent(code))
         .buildEmail()
-    Task { emailSettings.mailer.sendMail(customEmail, true) }
+    Task { emailSettings.mailer.sendMail(customEmail) }
   }
 
   override protected def sendInitializationCodeTo(mail: String,
@@ -34,7 +34,7 @@ class EmailAuthenticationUseCaseImpl(
         .withPlainText(
           emailSettings.emailContents.generateInitializationCodeContent(code))
         .buildEmail()
-    Task { emailSettings.mailer.sendMail(customEmail, true) }
+    Task { emailSettings.mailer.sendMail(customEmail) }
   }
 
   override protected def sendNewPlainPasswordTo(
@@ -47,6 +47,6 @@ class EmailAuthenticationUseCaseImpl(
         .withPlainText(emailSettings.emailContents
           .generateNewPassNotificationContent(newPlainPassword))
         .buildEmail()
-    Task { emailSettings.mailer.sendMail(customEmail, true) }
+    Task { emailSettings.mailer.sendMail(customEmail) }
   }
 }
