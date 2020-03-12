@@ -1,0 +1,52 @@
+package com.github.BambooTuna.MarketServer.usecase
+
+import com.github.BambooTuna.AkkaServerSupport.authentication.dao.UserCredentialsDao
+import com.github.BambooTuna.AkkaServerSupport.authentication.useCase.EmailAuthenticationUseCase
+import com.github.BambooTuna.AkkaServerSupport.core.session.StorageStrategy
+import com.github.BambooTuna.MarketServer.model.UserCredentialsImpl
+import com.github.BambooTuna.MarketServer.model.mail.EmailSettings
+import monix.eval.Task
+
+class EmailAuthenticationUseCaseImpl(
+    val userCredentialsDao: UserCredentialsDao[UserCredentialsImpl],
+    val cacheStorage: StorageStrategy[String, String],
+    emailSettings: EmailSettings
+) extends EmailAuthenticationUseCase[UserCredentialsImpl] {
+
+  override protected def sendActivateCodeTo(mail: String,
+                                            code: String): Task[Unit] = {
+    val customEmail =
+      emailSettings.email
+        .to(mail)
+        .withSubject(emailSettings.emailContents.activateCodeSubject)
+        .withPlainText(
+          emailSettings.emailContents.generateActivateCodeContent(code))
+        .buildEmail()
+    Task { emailSettings.mailer.sendMail(customEmail, true) }
+  }
+
+  override protected def sendInitializationCodeTo(mail: String,
+                                                  code: String): Task[Unit] = {
+    val customEmail =
+      emailSettings.email
+        .to(mail)
+        .withSubject(emailSettings.emailContents.initializationCodeSubject)
+        .withPlainText(
+          emailSettings.emailContents.generateInitializationCodeContent(code))
+        .buildEmail()
+    Task { emailSettings.mailer.sendMail(customEmail, true) }
+  }
+
+  override protected def sendNewPlainPasswordTo(
+      mail: String,
+      newPlainPassword: String): Task[Unit] = {
+    val customEmail =
+      emailSettings.email
+        .to(mail)
+        .withSubject(emailSettings.emailContents.newPassNotificationSubject)
+        .withPlainText(emailSettings.emailContents
+          .generateNewPassNotificationContent(newPlainPassword))
+        .buildEmail()
+    Task { emailSettings.mailer.sendMail(customEmail, true) }
+  }
+}

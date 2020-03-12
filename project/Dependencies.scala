@@ -85,7 +85,7 @@ object `doobie-quill` {
 object AkkaServerSupport {
   val resolver = "Maven Repo on github" at "https://BambooTuna.github.io/AkkaServerSupport"
 
-  private val version = "1.1.0-SNAPSHOT"
+  private val version = "1.1.1-SNAPSHOT"
   val core = "com.github.BambooTuna" %% "akkaserversupport-core" % version
   val authentication = "com.github.BambooTuna" %% "akkaserversupport-authentication" % version
   val cooperation = "com.github.BambooTuna" %% "akkaserversupport-cooperation" % version

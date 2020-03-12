@@ -19,7 +19,17 @@ import com.github.BambooTuna.MarketServer.controller.{
   AuthenticationControllerImpl,
   LineOAuth2ControllerImpl
 }
-import com.github.BambooTuna.MarketServer.dao.RedisStorageStrategy
+import com.github.BambooTuna.MarketServer.dao.{
+  LinkedUserCredentialsDaoImpl,
+  RedisStorageStrategy,
+  UserCredentialsDaoImpl
+}
+import com.github.BambooTuna.MarketServer.model.mail.EmailSettings
+import com.github.BambooTuna.MarketServer.usecase.{
+  AuthenticationUseCaseImpl,
+  EmailAuthenticationUseCaseImpl,
+  LinkedAuthenticationUseCaseImpl
+}
 import com.typesafe.config.Config
 import doobie.hikari.HikariTransactor
 import monix.eval.Task
@@ -44,25 +54,45 @@ abstract class Component(implicit system: ActorSystem,
       Blocker.liftExecutionContext(ec)
     )
 
-  private val sessionSettings: JWTSessionSettings =
+  val emailSettings = EmailSettings.fromConfig(config)
+
+  private implicit val sessionSettings: JWTSessionSettings =
     new ConfigSessionSettings(config)
 
   private val sessionStorage: StorageStrategy[String, String] =
-    RedisStorageStrategy.fromConfig(config, "session")(system, sessionSettings)
+    RedisStorageStrategy.fromConfig(system.settings.config, "session")
+
+  private val mailCodeStorage: StorageStrategy[String, String] =
+    RedisStorageStrategy.fromConfig(system.settings.config, "mail")
+
+  private val oauthStorage: StorageStrategy[String, String] =
+    RedisStorageStrategy.fromConfig(system.settings.config, "oauth2")
 
   private implicit val session: Session[String, SessionToken] =
     new DefaultSession[SessionToken](sessionSettings, sessionStorage)
 
-  val authenticationController =
-    new AuthenticationControllerImpl(dbSession)
+  private val userCredentialsDao = new UserCredentialsDaoImpl(dbSession)
+  private val linkedUserCredentialsDao = new LinkedUserCredentialsDaoImpl(
+    dbSession)
+
+  private val authenticationUseCase = new AuthenticationUseCaseImpl(
+    userCredentialsDao)
+  private val emailAuthenticationUseCase = new EmailAuthenticationUseCaseImpl(
+    userCredentialsDao,
+    mailCodeStorage,
+    emailSettings)
+  private val linkedAuthenticationUseCase = new LinkedAuthenticationUseCaseImpl(
+    linkedUserCredentialsDao)
+
+  protected val authenticationController = new AuthenticationControllerImpl(
+    authenticationUseCase,
+    emailAuthenticationUseCase)
 
   private val clientConfig: ClientConfig =
-    ClientConfig.fromConfig("line", config)
-
-  private val oauthStorage: StorageStrategy[String, String] =
-    RedisStorageStrategy.fromConfig(config, "oauth2")(system, sessionSettings)
-
-  val lineOAuth2Controller =
-    new LineOAuth2ControllerImpl(clientConfig, oauthStorage, dbSession)
+    ClientConfig.fromConfig("line", system.settings.config)
+  protected val lineOAuth2Controller =
+    new LineOAuth2ControllerImpl(linkedAuthenticationUseCase,
+                                 clientConfig,
+                                 oauthStorage)
 
 }

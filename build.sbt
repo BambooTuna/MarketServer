@@ -11,7 +11,8 @@ lazy val boot = (project in file("boot"))
       AkkaServerSupport.authentication,
       AkkaServerSupport.cooperation,
       MySQLConnectorJava.version,
-      Redis.client
+      Redis.client,
+      "org.simplejavamail" % "simple-java-mail" % "6.0.3"
     ) ++ `doobie-quill`.all
   )
 
