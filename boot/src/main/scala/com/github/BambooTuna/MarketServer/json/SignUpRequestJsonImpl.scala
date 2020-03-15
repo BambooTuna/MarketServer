@@ -3,7 +3,6 @@ package com.github.BambooTuna.MarketServer.json
 import com.github.BambooTuna.AkkaServerSupport.core.serializer.JsonRecodeSerializer
 import com.github.BambooTuna.MarketServer.SystemSettings
 import com.github.BambooTuna.MarketServer.json.validate.EMail
-import com.github.BambooTuna.MarketServer.model.UserCredentialsImpl
 import com.github.BambooTuna.MarketServer.model.account.{EncryptedPasswordImpl, UserCredentialsImpl}
 
 case class SignUpRequestJsonImpl(mail: String, pass: String) {
