@@ -1,4 +1,4 @@
-package com.github.BambooTuna.MarketServer.model.presentation
+package com.github.BambooTuna.MarketServer.model.market
 
 sealed trait Side extends io.getquill.Embedded {
   val value: String
@@ -13,7 +13,7 @@ case object Sell extends Side {
 
 object Side {
   def from(value: String): Side = value match {
-    case "Buy" => Buy
+    case "Buy"  => Buy
     case "Sell" => Sell
   }
 }

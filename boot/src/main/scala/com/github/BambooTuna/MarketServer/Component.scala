@@ -1,6 +1,6 @@
 package com.github.BambooTuna.MarketServer
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import cats.effect.{Blocker, Resource}
 import com.github.BambooTuna.AkkaServerSupport.authentication.oauth2.ClientConfig
@@ -17,10 +17,12 @@ import com.github.BambooTuna.AkkaServerSupport.core.session.{
 }
 import com.github.BambooTuna.MarketServer.controller.{
   AuthenticationControllerImpl,
-  LineOAuth2ControllerImpl
+  LineOAuth2ControllerImpl,
+  ProductDisplayController
 }
 import com.github.BambooTuna.MarketServer.dao.{
   LinkedUserCredentialsDaoImpl,
+  ProductDisplayDao,
   RedisStorageStrategy,
   UserCredentialsDaoImpl
 }
@@ -28,7 +30,8 @@ import com.github.BambooTuna.MarketServer.model.mail.EmailSettings
 import com.github.BambooTuna.MarketServer.usecase.{
   AuthenticationUseCaseImpl,
   EmailAuthenticationUseCaseImpl,
-  LinkedAuthenticationUseCaseImpl
+  LinkedAuthenticationUseCaseImpl,
+  ProductDisplayUseCase
 }
 import com.typesafe.config.Config
 import doobie.hikari.HikariTransactor
@@ -74,6 +77,7 @@ abstract class Component(implicit system: ActorSystem,
   private val userCredentialsDao = new UserCredentialsDaoImpl(dbSession)
   private val linkedUserCredentialsDao = new LinkedUserCredentialsDaoImpl(
     dbSession)
+  private val productDisplayDao = new ProductDisplayDao(dbSession)
 
   private val authenticationUseCase = new AuthenticationUseCaseImpl(
     userCredentialsDao)
@@ -94,5 +98,8 @@ abstract class Component(implicit system: ActorSystem,
     new LineOAuth2ControllerImpl(linkedAuthenticationUseCase,
                                  clientConfig,
                                  oauthStorage)
+
+  protected val productDisplayController = new ProductDisplayController(
+    productDisplayUseCase)
 
 }

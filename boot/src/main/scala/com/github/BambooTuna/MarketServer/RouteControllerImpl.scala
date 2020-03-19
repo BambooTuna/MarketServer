@@ -88,7 +88,7 @@ class RouteControllerImpl(implicit system: ActorSystem,
           complete(StatusCodes.BadRequest -> ErrorResponseJson(e.message))
         case e: Rejection =>
           complete(
-            StatusCodes.BadRequest -> ErrorResponseJson(s"Unknown Error"))
+            StatusCodes.BadRequest -> ErrorResponseJson(s"Unknown Error: $e"))
       }
       .result()
 
@@ -100,7 +100,8 @@ class RouteControllerImpl(implicit system: ActorSystem,
             authenticationCodeCycleRoute(
               monix.execution.Scheduler.Implicits.global) +
               accountCycleRoute(monix.execution.Scheduler.Implicits.global) +
-              oauth2Route(monix.execution.Scheduler.Implicits.global)
+              oauth2Route(monix.execution.Scheduler.Implicits.global) +
+              productDisplayRoute(monix.execution.Scheduler.Implicits.global)
           ).create
         }
       }
@@ -133,6 +134,21 @@ class RouteControllerImpl(implicit system: ActorSystem,
       route(GET,
             "oauth2" / "signin" / "line",
             lineOAuth2Controller.authenticationFromCode)
+    )
+
+  def productDisplayRoute(implicit s: Scheduler): Router =
+    Router(
+      route(GET, "products", productDisplayController.getAllProductRoute),
+      route(GET,
+            "product" / Segment,
+            productDisplayController.getProductDetailRoute),
+      route(GET,
+            "products" / "self",
+            productDisplayController.getMyProductListRoute),
+      route(POST, "product", productDisplayController.displayRoute),
+      route(PUT,
+            "product" / Segment,
+            productDisplayController.updateProductRoute)
     )
 
 }

@@ -20,3 +20,13 @@ CREATE TABLE `linked_user_credentials` (
     UNIQUE KEY (`service_id`, `service_name`),
     UNIQUE KEY (`mail`)
 );
+
+CREATE TABLE `product_display` (
+    `id` VARCHAR(255) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `detail` VARCHAR(255) NOT NULL,
+    `price` bigint NOT NULL,
+    `presenter_id` VARCHAR(255) NOT NULL,
+    `state` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+);

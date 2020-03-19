@@ -4,6 +4,11 @@ object Akka {
   private val version     = "2.5.19"
   val actor: ModuleID     = "com.typesafe.akka" %% "akka-actor" % version
   val stream: ModuleID    = "com.typesafe.akka" %% "akka-stream" % version
+  val persistence: ModuleID = "com.typesafe.akka" %% "akka-persistence" % version
+  val `persistence-query`: ModuleID = "com.typesafe.akka" %% "akka-persistence-query" % version
+  val cluster: ModuleID = "com.typesafe.akka" %% "akka-cluster" % version
+  val clusterTools: ModuleID = "com.typesafe.akka" %% "akka-cluster-tools" % version
+  val clusterSharding: ModuleID = "com.typesafe.akka" %% "akka-cluster-sharding" % version
   val testkit: ModuleID   = "com.typesafe.akka" %% "akka-testkit" % version
   val slf4j: ModuleID     = "com.typesafe.akka" %% "akka-slf4j" % version
   val contrib: ModuleID     = "com.typesafe.akka" %% "akka-contrib" % version
