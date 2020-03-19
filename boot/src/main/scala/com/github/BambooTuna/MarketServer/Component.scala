@@ -87,6 +87,9 @@ abstract class Component(implicit system: ActorSystem,
     emailSettings)
   private val linkedAuthenticationUseCase = new LinkedAuthenticationUseCaseImpl(
     linkedUserCredentialsDao)
+  private val productDisplayUseCase = new ProductDisplayUseCase(
+    productDisplayDao)
+
 
   protected val authenticationController = new AuthenticationControllerImpl(
     authenticationUseCase,
