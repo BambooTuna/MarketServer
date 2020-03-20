@@ -1,0 +1,28 @@
+openapi: 3.0.1
+info:
+  title: ""
+  description: ""
+  termsOfService: ""
+  version: ""
+servers:
+  - url: http://localhost:8081
+security: []
+paths:
+  /items:
+    get:
+      summary: Get Items
+      operationId: create
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        "200":
+          description: Create response
+          content:
+            application/json: {}
+        "500":
+          description: Internal server error
+components:
+  schemas:
+    Function1RequestContextFutureRouteResult:
+      type: object

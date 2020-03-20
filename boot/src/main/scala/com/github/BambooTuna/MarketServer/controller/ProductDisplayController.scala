@@ -15,7 +15,7 @@ import monix.execution.Scheduler
 import com.github.BambooTuna.MarketServer.json.ProductDisplayRequestJson._
 import com.github.BambooTuna.MarketServer.model.market.asset.AssetsState
 
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 class ProductDisplayController(productDisplayUseCase: ProductDisplayUseCase)(
     implicit session: Session[String, SessionToken])

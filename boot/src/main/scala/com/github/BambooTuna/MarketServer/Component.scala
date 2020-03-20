@@ -1,6 +1,6 @@
 package com.github.BambooTuna.MarketServer
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import cats.effect.{Blocker, Resource}
 import com.github.BambooTuna.AkkaServerSupport.authentication.oauth2.ClientConfig
@@ -90,6 +90,11 @@ abstract class Component(implicit system: ActorSystem,
   private val productDisplayUseCase = new ProductDisplayUseCase(
     productDisplayDao)
 
+//  private val bankAccountAggregatesRef: ActorRef =
+//    system.actorOf(Props(new CreditAccountAggregates()),
+//                   "sharded-credit-accounts")
+//  private val creditAccountAggregateUseCase = new CreditAccountAggregateUseCase(
+//    bankAccountAggregatesRef)
 
   protected val authenticationController = new AuthenticationControllerImpl(
     authenticationUseCase,

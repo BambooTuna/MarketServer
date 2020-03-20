@@ -13,13 +13,13 @@ object Main extends App {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  val r = new RouteControllerImpl
-
   val serverConfig: ServerConfig =
     ServerConfig(
       system.settings.config.getString("boot.server.host"),
       system.settings.config.getString("boot.server.port").toInt
     )
+
+  val r = new RouteControllerImpl(serverConfig)
 
   val bindingFuture =
     Http().bindAndHandle(r.toRoutes, serverConfig.host, serverConfig.port)

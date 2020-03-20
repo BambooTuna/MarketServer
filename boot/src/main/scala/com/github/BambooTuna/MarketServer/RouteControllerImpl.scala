@@ -7,28 +7,35 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Rejection, RejectionHandler, Route}
 import akka.stream.ActorMaterializer
 import com.github.BambooTuna.AkkaServerSupport.authentication.error._
+import com.github.BambooTuna.AkkaServerSupport.core.model.ServerConfig
 import com.github.BambooTuna.AkkaServerSupport.core.router.{
   RouteController,
   Router,
   route
 }
+import com.github.BambooTuna.MarketServer.controller.{
+  AuthenticationControllerImpl,
+  LineOAuth2ControllerImpl,
+  ProductDisplayController
+}
+import com.github.BambooTuna.MarketServer.swagger.SwaggerDocService
 import monix.execution.Scheduler
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.ExecutionContext
-
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import io.circe.generic.auto._
 
-class RouteControllerImpl(implicit system: ActorSystem,
-                          mat: ActorMaterializer,
-                          executor: ExecutionContext)
+class RouteControllerImpl(serverConfig: ServerConfig)(
+    implicit system: ActorSystem,
+    mat: ActorMaterializer,
+    executor: ExecutionContext)
     extends Component
     with RouteController {
 
   private val logger: Logger = LoggerFactory.getLogger(getClass)
+  val apiVersion = "v2"
 
-  case class ErrorResponseJson(message: String)
   val customRejectionHandler: RejectionHandler =
     RejectionHandler
       .newBuilder()
@@ -93,16 +100,20 @@ class RouteControllerImpl(implicit system: ActorSystem,
       .result()
 
   override def toRoutes: Route =
-    handleExceptions(defaultExceptionHandler(logger)) {
-      handleRejections(customRejectionHandler) {
-        corsSupport.corsHandler {
-          (
-            authenticationCodeCycleRoute(
-              monix.execution.Scheduler.Implicits.global) +
-              accountCycleRoute(monix.execution.Scheduler.Implicits.global) +
-              oauth2Route(monix.execution.Scheduler.Implicits.global) +
-              productDisplayRoute(monix.execution.Scheduler.Implicits.global)
-          ).create
+    corsSupport.corsHandler {
+      handleExceptions(defaultExceptionHandler(logger)) {
+        handleRejections(customRejectionHandler) {
+          swaggerRoute(serverConfig,
+                       Set(classOf[AuthenticationControllerImpl],
+                           classOf[LineOAuth2ControllerImpl],
+                           classOf[ProductDisplayController])) ~
+            (
+              authenticationCodeCycleRoute(
+                monix.execution.Scheduler.Implicits.global) +
+                accountCycleRoute(monix.execution.Scheduler.Implicits.global) +
+                oauth2Route(monix.execution.Scheduler.Implicits.global) +
+                productDisplayRoute(monix.execution.Scheduler.Implicits.global)
+            ).create
         }
       }
     }
@@ -150,5 +161,13 @@ class RouteControllerImpl(implicit system: ActorSystem,
             "product" / Segment,
             productDisplayController.updateProductRoute)
     )
+
+  def swaggerRoute(serverConfig: ServerConfig, apis: Set[Class[_]]): Route = {
+    path("swagger") {
+      getFromResource("swagger/index.html")
+    } ~
+      getFromResourceDirectory("swagger") ~
+      new SwaggerDocService(serverConfig, apis).routes
+  }
 
 }

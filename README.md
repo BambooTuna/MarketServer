@@ -1,5 +1,5 @@
 # MarketServer
-
+フリマサイトみたいな何か
 
 [Front](https://github.com/BambooTuna/market-front)
 
@@ -13,7 +13,7 @@ $ export SESSION_TOKEN=~~~
 ```
 HeaderName=`Set-Authorization`にセッショントークンがセットされた状態でレスポンスが帰ってくるのでそれを使う
 
-### アカウント有効化メール送信
+### アカウント有効化メール再送
 ```bash
 $ curl -X PUT -H "Authorization: $SESSION_TOKEN" localhost:8080/activate -i
 ```
@@ -53,7 +53,7 @@ $ curl -X GET "localhost:8080/products?limit=5&page=1"
 
 ### 出品詳細
 ```bash
-$ curl -X GET "localhost:8080/product/:product_id?limit=5&page=1"
+$ curl -X GET localhost:8080/product/:product_id
 ```
 
 ### 自分の出品
@@ -67,6 +67,7 @@ $ curl -X POST localhost:8080/product -H "Authorization: $SESSION_TOKEN" -H "Con
 ```
 
 ### 出品編集
+state-> open, draft, closed
 ```bash
 $ curl -X PUT localhost:8080/product/:product_id -H "Authorization: $SESSION_TOKEN" -H "Content-Type: application/json" -d '{"title":"タイトル","detail":"商品詳細","price":1100,"state":"draft"}'
 ```

@@ -14,7 +14,9 @@ lazy val boot = (project in file("boot"))
       Redis.client,
       "org.simplejavamail" % "simple-java-mail" % "6.0.3",
       "org.iq80.leveldb" % "leveldb" % "0.7",
-      "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
+      "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8",
+      "javax.ws.rs" % "javax.ws.rs-api" % "2.0.1",
+      "com.github.swagger-akka-http" %% "swagger-akka-http" % "2.0.4"
     ) ++ `doobie-quill`.all
   )
 
