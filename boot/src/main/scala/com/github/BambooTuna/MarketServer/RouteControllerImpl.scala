@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.HttpMethods.{DELETE, GET, POST, PUT}
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{Rejection, RejectionHandler, Route}
+import akka.http.scaladsl.server.{Directive, Rejection, RejectionHandler, Route}
 import akka.stream.ActorMaterializer
 import com.github.BambooTuna.AkkaServerSupport.authentication.error._
 import com.github.BambooTuna.AkkaServerSupport.core.model.ServerConfig
@@ -93,6 +93,8 @@ class RouteControllerImpl(serverConfig: ServerConfig)(
           complete(StatusCodes.BadRequest -> ErrorResponseJson(e.message))
         case e: akka.http.scaladsl.server.MalformedRequestContentRejection =>
           complete(StatusCodes.BadRequest -> ErrorResponseJson(e.message))
+        case akka.http.scaladsl.server.AuthorizationFailedRejection =>
+          complete(StatusCodes.Unauthorized)
         case e: Rejection =>
           complete(
             StatusCodes.BadRequest -> ErrorResponseJson(s"Unknown Error: $e"))
