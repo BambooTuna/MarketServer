@@ -63,16 +63,28 @@ class ProductDisplayDao(dbSession: Resource[Task, HikariTransactor[Task]]) {
       .use(x => run(q).transact(x))
   }
 
-  def resolveById(id: String,
-                  limit: Int,
-                  offset: Int): OptionT[Task, ProductDisplayDaoRecord] = {
+  def resolveById(id: String): OptionT[Task, ProductDisplayDaoRecord] = {
     OptionT[Task, ProductDisplayDaoRecord] {
       val q = quote {
         query[ProductDisplayDaoRecord]
           .filter(a =>
             a.id == lift(id) && a.state.value == lift(AssetsState.Open.value))
-          .drop(lift(offset))
-          .take(lift(limit))
+      }
+      dbSession
+        .use(x => run(q).transact(x))
+        .map(_.headOption)
+    }
+  }
+
+  def resolveById(
+      id: String,
+      presenterId: String): OptionT[Task, ProductDisplayDaoRecord] = {
+    OptionT[Task, ProductDisplayDaoRecord] {
+      val q = quote {
+        query[ProductDisplayDaoRecord]
+          .filter(a =>
+            a.id == lift(id) && a.presenterId == lift(presenterId) && a.state.value != lift(
+              AssetsState.Closed.value))
       }
       dbSession
         .use(x => run(q).transact(x))

@@ -36,12 +36,14 @@ class ProductDisplayUseCase(productDisplayDao: ProductDisplayDao) {
     : Task[Seq[ProductDisplayDaoRecord]] =
     productDisplayDao.all(displayLimit.limit, displayLimit.offset)
 
-  def getProductDetail(displayId: String,
-                       displayLimit: DisplayLimit = DisplayLimit.default)
-    : OptionT[Task, ProductDisplayDaoRecord] =
-    productDisplayDao.resolveById(displayId,
-                                  displayLimit.limit,
-                                  displayLimit.offset)
+  def getProductDetail(
+      displayId: String): OptionT[Task, ProductDisplayDaoRecord] =
+    productDisplayDao.resolveById(displayId)
+
+  def getMyProductDetail(
+      displayId: String,
+      practitionerId: String): OptionT[Task, ProductDisplayDaoRecord] =
+    productDisplayDao.resolveById(displayId, practitionerId)
 
   def getMyAllProduct(practitionerId: String,
                       displayLimit: DisplayLimit = DisplayLimit.default,

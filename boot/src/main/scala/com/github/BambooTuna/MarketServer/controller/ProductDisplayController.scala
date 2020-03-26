@@ -38,17 +38,24 @@ class ProductDisplayController(productDisplayUseCase: ProductDisplayUseCase)(
 
   def getProductDetailRoute(implicit s: Scheduler): QueryP[Tuple1[String]] = _ {
     displayId =>
-      val f =
-        productDisplayUseCase
-          .getProductDetail(displayId)
-          .toRight(1) //TODO
-          .value
-          .runToFuture
-      onSuccess(f) {
-        case Right(value) => complete(StatusCodes.OK -> value)
-        case Left(value) =>
-          complete(StatusCodes.NotFound)
-        //reject(value)
+      session.optionalRequiredSession { v =>
+        val f =
+          (v match {
+            case Some(value) =>
+              productDisplayUseCase
+                .getMyProductDetail(displayId, value.userId)
+            case None =>
+              productDisplayUseCase
+                .getProductDetail(displayId)
+          }).toRight(1) //TODO
+            .value
+            .runToFuture
+        onSuccess(f) {
+          case Right(value) => complete(StatusCodes.OK -> value)
+          case Left(value) =>
+            complete(StatusCodes.NotFound)
+          //reject(value)
+        }
       }
   }
 
