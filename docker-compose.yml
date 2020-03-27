@@ -1,8 +1,8 @@
 version: "3.4"
 services:
   mysql:
-    restart: always
     build: rdb/mysql
+    restart: always
     ports:
       - 3306:3306
     environment:
@@ -16,7 +16,8 @@ services:
     ports:
       - 6379:6379
   boot:
-    image: bambootuna/marketserver:latest
+#    image: bambootuna/marketserver:latest
+    build: ./boot/target/docker/stage
     restart: always
     ports:
       - 8080:8080
