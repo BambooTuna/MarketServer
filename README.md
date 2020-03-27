@@ -71,3 +71,19 @@ state-> open, draft, closed
 ```bash
 $ curl -X PUT localhost:8080/product/:product_id -H "Authorization: $SESSION_TOKEN" -H "Content-Type: application/json" -d '{"title":"タイトル","detail":"商品詳細","price":1100,"state":"draft"}'
 ```
+
+
+## 環境構築・デプロイ
+```bash
+$ docker pull hseeberger/scala-sbt:8u222_1.3.5_2.13.1
+$ echo alias scala="'"'docker run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$PWD:/$PWD" \
+  -w="/$PWD" \
+  hseeberger/scala-sbt:8u222_1.3.5_2.13.1'"'" >> ~/.bashrc
+$ source ~/.bashrc
+
+$ scala sbt docker:stage
+$ sudo chmod 700 boot/target/docker/stage/opt/docker/bin/marketserver
+$ docker-copmose up --build
+```
