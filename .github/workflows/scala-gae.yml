@@ -1,0 +1,50 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/cache@v1
+      with:
+        path: ~/.ivy2/cache
+        key: |
+          v1-dependencies--${{ hashFiles('**/build.sbt') }}
+        restore-keys: |
+          v1-dependencies-${{ hashFiles('**/build.sbt') }}
+          v1-dependencies-
+    - uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: |
+          v1-sbt--${{ hashFiles('**/build.sbt') }}
+        restore-keys: |
+          v1-sbt-${{ hashFiles('**/build.sbt') }}
+          v1-sbt-
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Run tests
+      run: cat /dev/null | sbt test:test
+    - name: build jar
+      run: sbt assembly
+    - name: GAE deploy
+      run: |
+        echo ${GCLOUD_SERVICE_KEY} | base64 -d > ./service_key.json
+        echo 'github-actions@${PROJECT_NAME}.iam.gserviceaccount.com' | gcloud auth activate-service-account --key-file ./service_key.json
+        gcloud app deploy app.yaml --project ${PROJECT_NAME}
+      env:
+        CI: true
+        PROJECT_NAME: market-114
+        GCLOUD_SERVICE_KEY: ${{ secrets.GcloudServiceKey }}
