@@ -4,6 +4,7 @@ lazy val boot = (project in file("boot"))
   .enablePlugins(JavaAppPackaging, AshScriptPlugin, DockerPlugin)
   .settings(commonSettings)
   .settings(dockerSettings)
+  .settings(gaeSettings)
   .settings(
     resolvers += AkkaServerSupport.resolver,
     libraryDependencies ++= Seq(

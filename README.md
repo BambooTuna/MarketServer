@@ -74,6 +74,8 @@ $ curl -X PUT localhost:8080/product/:product_id -H "Authorization: $SESSION_TOK
 
 
 ## 環境構築・デプロイ
+
+### GCE
 ```bash
 $ docker pull hseeberger/scala-sbt:8u222_1.3.5_2.13.1
 $ echo alias scala="'"'docker run --rm \
@@ -86,4 +88,10 @@ $ source ~/.bashrc
 $ scala sbt docker:stage
 $ sudo chmod 700 boot/target/docker/stage/opt/docker/bin/marketserver
 $ docker-copmose up --build
+```
+
+### GAE
+1. build jar file
+```bash
+$ sbt assembly
 ```

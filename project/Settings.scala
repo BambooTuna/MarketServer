@@ -4,6 +4,8 @@ import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport._
 import com.typesafe.sbt.SbtNativePackager.autoImport.{maintainer, packageName}
 import com.typesafe.sbt.packager.archetypes.scripts.BashStartScriptPlugin.autoImport.bashScriptDefines
 import com.typesafe.sbt.packager.docker.DockerPlugin.autoImport._
+import sbtassembly.AssemblyKeys._
+import sbtassembly.{MergeStrategy, PathList}
 
 object Settings {
 
@@ -45,6 +47,15 @@ object Settings {
     mainClass in (Compile, bashScriptDefines) := Some("com.github.BambooTuna.MarketServer.Main"),
     packageName in Docker := name.value,
     dockerExposedPorts := Seq(8080)
+  )
+
+  lazy val gaeSettings = Seq(
+    assemblyOutputPath in assembly := file("mygae.jar"),
+    mainClass in assembly := Some("com.github.BambooTuna.MarketServer.Main"),
+    assemblyMergeStrategy in assembly := {
+      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case _ => MergeStrategy.first
+    }
   )
 
 }
